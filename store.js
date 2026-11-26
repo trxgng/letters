@@ -70,7 +70,7 @@
   }
 
   /* reload by itself when a newer version of the site is uploaded (bump version.txt and the ?v= in index.html together) */
-  const VER = "9";
+  const VER = "10";
   setInterval(async () => { if (document.hidden || demo) return; try { const v = (await (await fetch("version.txt?" + Date.now(), {cache: "no-store"})).text()).trim();
     if (v && v !== VER && !document.querySelector("#ed.show,#letter.show,.crop,.confirm:not([hidden])") && !(document.getElementById("replytext") || {}).value) location.reload(); } catch (e) {} }, 120000);
 
@@ -114,6 +114,7 @@
     url: id => B.url(id),
     async tryCode(k) { k = (k || "").trim(); let r = null; try { r = await B.open(k); } catch (e) {} if (!r) return false; ls.set("letters.k", k); return true; },
     pageLink: () => location.origin + location.pathname,
+    myLink: () => linkFor(code),
     async setName(n) { n = (n || "").trim().slice(0, 60); await B.personRename(me.id, n); me.name = n; await refresh().catch(() => {}); },
     addReply: (l, b) => B.addReply(l, b),
     replies: l => B.replies(l),

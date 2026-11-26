@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" id="themecol" content="#ebe4dc">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Letters">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Letters</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Dancing+Script:wght@500;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -33,16 +38,16 @@ body{margin:0;color:var(--olive);font:16px/1.55 Nunito,system-ui,sans-serif;over
 .bgimg{position:fixed;left:0;right:0;top:0;height:100vh;height:100lvh;z-index:-1;overflow:hidden;background:linear-gradient(#eae7e1,#ebe3db)}
 .bgimg::before{content:"";position:absolute;left:0;top:0;height:100%;aspect-ratio:1080/1802;background:url(bg.jpg) left top/cover no-repeat;
   -webkit-mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);mask-composite:intersect}
-.bgimg.custom{display:none}
-html.custombg{min-height:100%;background-color:var(--bgcol,#ebe4dc)}
-body.custom{background:transparent!important;min-height:100vh;min-height:100lvh}
-body.custom h1.home{text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.85),0 0 50px rgba(255,255,255,.6)}
-body.custom .sub,body.custom .empty,body.custom .hint,body.custom .lock{display:inline-block;background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:4px 12px;border-radius:999px;text-shadow:none}
-body.custom .hint{display:inline-flex}body.custom .lock{display:grid}body.custom .sub:empty{display:none}body.custom .empty{border-radius:14px;padding:10px 14px}
-body.custom .pill:not(.dark){background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
-body.custom .item>div:not(.mini){background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:12px;padding:4px 10px 6px}
-.bgimg.custom::before{inset:calc(var(--bgblur,0px) * -2);width:auto;height:auto;aspect-ratio:auto;background:var(--bgurl,none) var(--bgpos,center center)/var(--bgsize,cover) var(--bgrep,no-repeat);filter:blur(var(--bgblur,0px));-webkit-mask-image:none;mask-image:none}
+.bgimg.custom{display:block;top:calc(-1 * env(safe-area-inset-top, 0px));bottom:auto;height:calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));height:calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));background:var(--bgcol,#ebe4dc)}
+.bgimg.custom::before{inset:0;width:auto;height:auto;aspect-ratio:auto;background:var(--bgurl,none) var(--bgpos,center center)/var(--bgsize,cover) var(--bgrep,no-repeat);-webkit-mask-image:none;mask-image:none}
 .bgimg.custom::after{content:"";position:absolute;inset:0;background:rgba(246,242,236,var(--bghaze,.28))}
+html.custombg{background:var(--bgcol,#ebe4dc)}body.custom{background:transparent!important}
+body.custom h1.home{text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.85),0 0 50px rgba(255,255,255,.6)}
+body.custom .sub,body.custom .empty,body.custom .hint,body.custom .lock,body.custom .item b,body.custom .item small,body.custom .pill:not(.dark){text-shadow:0 0 1px #fff,0 0 2px #fff,0 0 3px #fff,0 0 6px #fff,0 0 10px #fff,0 0 18px rgba(255,255,255,.9);color:#26301c;font-weight:800}
+body.custom h1.home{color:#26301c}
+body.custom .pill:not(.dark){border-width:2px;box-shadow:0 0 0 1px rgba(255,255,255,.7),0 0 14px rgba(255,255,255,.55)}
+.appbtn{display:none}body.canapp .appbtn{display:inline-flex}
+@media (display-mode: standalone){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}}
 .bgp{max-height:86vh;overflow:auto;text-align:left}.bgp h3{font:400 40px/1 var(--hand),cursive;margin:0 0 8px}.bgp .lbl{font-weight:800;font-size:14px;margin:14px 0 6px;display:block}
 .bgp .seg{flex-wrap:wrap}.bgp input[type=range]{width:100%;accent-color:var(--olive);min-height:36px}
 .bgp .cols{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.bgp .cols button{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1.5px #ddd6ca;cursor:pointer;padding:0}
@@ -50,7 +55,6 @@ body.custom .item>div:not(.mini){background:rgba(255,255,255,.8);-webkit-backdro
 .bgp .thumb{width:96px;height:64px;border-radius:8px;background:#eee center/cover;display:inline-block;vertical-align:middle;margin-right:8px;border:1px solid #ddd6ca}
 .bgp .pill{min-height:40px;padding:8px 14px;font-size:14px}.bgp .row2{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 body.custom .view{padding-left:max(20px,6vw);padding-top:clamp(28px,6vh,72px);background:none}
-body.custom h1.home,body.custom .sub,body.custom .hint{text-shadow:0 0 18px rgba(255,255,255,.9),0 0 4px rgba(255,255,255,.8)}
 .mimg{display:none;mix-blend-mode:multiply;object-fit:contain}
 body.hasmotif .mimg{display:block}body.hasmotif svg.swan{display:none}
 /* envelope designs */
@@ -339,6 +343,7 @@ textarea{min-height:180px;resize:vertical}
     <button class="pill dark" id="newcard">+ New postcard</button>
     <button class="pill" id="friendsbtn" hidden>My friends</button>
     <button class="pill" id="homebgbtn">Change background</button>
+    <button class="pill appbtn" id="appbtn">Full screen app</button>
   </div>
   <div class="grid" id="grid"></div>
   <p class="empty" id="empty" hidden></p>
@@ -526,9 +531,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=9"></script>
-<script src="supabase.js?v=9"></script>
-<script src="store.js?v=9"></script>
+<script src="config.js?v=10"></script>
+<script src="supabase.js?v=10"></script>
+<script src="store.js?v=10"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -587,20 +592,17 @@ textarea{min-height:180px;resize:vertical}
   const hex2rgb = c => /^#[0-9a-f]{6}$/i.test(c || "") ? "rgb(" + [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)).join(",") + ")" : c;
   let bgSeq = 0;
   const applyBg = () => {
-    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, col = S.bgColor || "", box = document.querySelector(".bgimg"), H = document.documentElement;
+    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, col = S.bgColor || "", box = document.querySelector(".bgimg"), st = box.style, H = document.documentElement;
     const on = !!(id || col); box.classList.toggle("custom", on); document.body.classList.toggle("custom", on); H.classList.toggle("custombg", on);
-    const seq = ++bgSeq;
-    if (!on) { H.style.background = ""; $("themecol").setAttribute("content", "#ebe4dc"); return; }
+    const seq = ++bgSeq; H.style.background = "";
+    if (!on) { st.removeProperty("--bgurl"); H.style.removeProperty("--bgcol"); $("themecol").setAttribute("content", "#ebe4dc"); return; }
     const fit = own ? "cover" : (S.bgFit || "cover"), haze = own ? .28 : (S.bgHaze === undefined || S.bgHaze === "" ? .28 : +S.bgHaze / 100), blur = own ? 0 : (+S.bgBlur || 0);
-    const size = fit === "repeat" ? (+S.bgSize || 260) + "px auto" : fit, rep = fit === "repeat" ? "repeat" : "no-repeat", pos = fit === "repeat" ? "left top" : (S.bgPos || "center center");
-    const veil = "linear-gradient(rgba(246,242,236," + haze + "),rgba(246,242,236," + haze + "))";
-    const paint = (url, tint) => { if (seq !== bgSeq) return;
-      H.style.background = veil + (url ? ', url("' + url + '") ' + pos + " / " + size + " " + rep : "") + ", " + (col || tint || "#ebe4dc");
-      $("themecol").setAttribute("content", mixHaze(hex2rgb(col) || tint, haze) || "#ebe4dc"); };
-    if (!id) { paint("", ""); return; }
-    const src = blob(id);
-    paint(src, "");
-    Promise.all([avgColour(src), blur ? blurred(src, blur) : Promise.resolve(src)]).then(([t, u]) => paint(u, t));
+    st.setProperty("--bgsize", fit === "repeat" ? (+S.bgSize || 260) + "px auto" : fit); st.setProperty("--bgrep", fit === "repeat" ? "repeat" : "no-repeat");
+    st.setProperty("--bgpos", fit === "repeat" ? "left top" : (S.bgPos || "center center")); st.setProperty("--bghaze", String(haze));
+    const tintTo = t => { const c = mixHaze(hex2rgb(col) || t, haze) || "#ebe4dc"; st.setProperty("--bgcol", col || t || "#ebe4dc"); H.style.setProperty("--bgcol", c); $("themecol").setAttribute("content", c); };
+    if (!id) { st.removeProperty("--bgurl"); tintTo(""); return; }
+    const src = blob(id); st.setProperty("--bgurl", 'url("' + src + '")'); tintTo("");
+    Promise.all([avgColour(src), blur ? blurred(src, blur) : Promise.resolve(src)]).then(([t, u]) => { if (seq !== bgSeq) return; st.setProperty("--bgurl", 'url("' + u + '")'); tintTo(t); });
   };
   const saveSettings = async patch => { settings = {...settings, ...patch}; await db.doc("settings/main").set(settings); };
 
@@ -994,6 +996,13 @@ textarea{min-height:180px;resize:vertical}
     try { const patch = {}; for (const k of BGK) patch[k] = d[k] === undefined ? "" : d[k]; patch.bgOwn = STORE.isOwner() ? false : !!d.bgOwn; await saveSettings(patch); bgDraft = null; applyBg(); $("bgpanel").hidden = true; toast("Background saved."); }
     catch (e) { toast("Couldn't save. Please try again."); } $("bgsave").disabled = false; });
 
+  /* home screen app: the address must carry the personal code, because the app keeps its own storage */
+  const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
+  if (!standalone && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) document.body.classList.add("canapp");
+  $("appbtn").addEventListener("click", () => { history.replaceState(null, "", STORE.myLink()); const box = document.createElement("div"); box.className = "confirm";
+    box.innerHTML = '<div role="dialog" aria-modal="true"><p>Open Letters full screen, with your picture behind the top and bottom of the screen:</p><ol style="margin:0 0 16px 18px;padding:0;line-height:1.6"><li>Tap the <b>⋯</b> or <b>Share</b> button in Safari</li><li>Tap <b>Add to Home Screen</b></li><li>Keep <b>Open as Web App</b> on, then tap <b>Add</b></li><li>Open Letters from your home screen</li></ol><p style="font-weight:600;font-size:14px">This link has your personal code in it, so don\'t share this screen.</p><div class="seg"><button type="button" data-a="ok" style="background:var(--olive);color:#fff;border-color:var(--olive)">Got it</button></div></div>';
+    document.body.append(box); box.addEventListener("click", e => { if ((e.target.dataset && e.target.dataset.a) || e.target === box) box.remove(); }); });
+
   /* friends list (owner only) */
   const copyText = async (t, msg) => { try { await navigator.clipboard.writeText(t); toast(msg); } catch (e) { prompt("Copy this link:", t); } };
   const renderFriends = () => { const box = $("frlist"); box.textContent = "";
@@ -1046,6 +1055,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=9"></script>
+<script src="import.js?v=10"></script>
 </body>
 </html>
