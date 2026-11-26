@@ -155,7 +155,7 @@ svg.f{width:100%;height:100%;display:block;overflow:visible}
 .flap{position:absolute;left:0;right:0;top:0;height:70%;z-index:3;transform-origin:top center;filter:drop-shadow(0 2px 2px rgba(80,70,50,.12));transition:transform .7s cubic-bezier(.5,0,.3,1),z-index 0s .35s}
 .env.open .flap{transform:rotateX(180deg);z-index:0}
 .efront{position:absolute;inset:0;z-index:6;border-radius:10px;display:none;background:var(--cov2) center/cover no-repeat,var(--tex),var(--env2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
-.env.showfront .efront{display:block}.efront.plain{background:var(--tex),linear-gradient(180deg,var(--env),var(--env2))}
+.env.showfront .efront{display:block}.mini .efront{display:block;z-index:1}.mini .eto{font-size:clamp(18px,5vw,28px)}.efront.plain{background:var(--tex),linear-gradient(180deg,var(--env),var(--env2))}
 .eto{position:absolute;left:38%;top:52%;font:400 clamp(30px,8vw,52px)/1.1 var(--hand),cursive;color:var(--ink);display:none}.efront.plain .eto{display:block}
 .estamp{position:absolute;right:6%;top:9%;width:13%;aspect-ratio:.8;border:2px dashed var(--line);border-radius:3px;display:none}.efront.plain .estamp{display:block}
 #home .pill.dark{background:var(--wc);border-color:var(--wc);color:var(--wct,#fff)}
@@ -355,7 +355,7 @@ textarea{min-height:180px;resize:vertical}
       <a class="pill" href="#" id="backlink">← All letters</a>
       <span id="ownertools" hidden><button class="pill" id="copy">Copy link</button> <button class="pill dark" id="editbtn">Edit</button></span>
     </div>
-    <button class="obj env" id="env" aria-label="Open the envelope">
+    <button class="obj env showfront" id="env" aria-label="Open the envelope">
       <div class="back"></div><div class="peek"></div>
       <div class="front"><div class="penv"></div><div class="deco"></div><svg class="f" viewBox="0 0 155 100" preserveAspectRatio="none" aria-hidden="true"><g filter="url(#paper)">
         <path class="fa" d="M0,3 Q0,0 3,1 L70,50 Q74,53 70,56 L3,99 Q0,100 0,97Z"/><path class="fa" d="M155,3 Q155,0 152,1 L85,50 Q81,53 85,56 L152,99 Q155,100 155,97Z"/>
@@ -528,9 +528,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=12"></script>
-<script src="supabase.js?v=12"></script>
-<script src="store.js?v=12"></script>
+<script src="config.js?v=13"></script>
+<script src="supabase.js?v=13"></script>
+<script src="store.js?v=13"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -639,7 +639,8 @@ textarea{min-height:180px;resize:vertical}
       const a = document.createElement("a"); a.className = "item"; a.href = "#" + id; a.dataset.pal = L.pal; a.dataset.design = L.design;
       const m = document.createElement("div"); m.className = "mini " + (L.look === "postcard" ? "p" : "e");
       if (L.look === "postcard") { const ph = document.createElement("div"); ph.className = "ph"; if (L.cover) ph.append(img(L.cover)); else ph.dataset.art = L.coverArt; m.append(ph); }
-      else { m.innerHTML = envSvg; m.querySelector(".penv").style.setProperty("--cov", L.cover ? 'url("' + blob(L.cover) + '")' : "none"); if (L.design === "photo" && L.cover) m.dataset.photo = ""; }
+      else { const f = document.createElement("div"); f.className = "efront" + (L.cover2 ? "" : " plain"); if (L.cover2) f.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")');
+        const st = document.createElement("span"); st.className = "estamp"; const to = document.createElement("b"); to.className = "eto"; to.textContent = L.to ? "To " + L.to : ""; f.append(st, to); m.append(f); }
       const t = document.createElement("div"); const b = document.createElement("b"); b.textContent = !mine(L) ? "From " + (STORE.nameOf(L.by) || L.from || "a friend") : L.to ? "To " + L.to : "Untitled";
       const s = document.createElement("small"); s.textContent = (L.look === "postcard" ? "Postcard" : "Letter") + (L.date ? " · " + L.date : "");
       if (canEdit && rc[id]) { const c = document.createElement("span"); c.className = "rc"; c.textContent = " · " + rc[id] + (rc[id] === 1 ? " reply" : " replies"); s.append(c); }
@@ -666,7 +667,7 @@ textarea{min-height:180px;resize:vertical}
     const bk = $("env").querySelector(".back"), pb = document.querySelector("#card .pback");
     const ev = $("env"), ef = ev.querySelector(".efront"); ef.classList.toggle("plain", !L.cover2); ef.querySelector(".eto").textContent = L.to ? "To " + L.to : "";
     if (L.cover2) ef.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")'); else ef.style.removeProperty("--cov2");
-    if (!card && !ev.classList.contains("open")) $("hint").textContent = ev.classList.contains("showfront") ? "Tap the envelope to open it" : "Tap to turn the envelope over";
+    if (!card && !ev.classList.contains("open")) $("hint").textContent = ev.classList.contains("showfront") ? "Tap to turn the envelope over" : "Tap the envelope to open it";
     pb.style.background = L.cover2 ? 'linear-gradient(rgba(255,253,248,.74),rgba(255,253,248,.74)), url("' + blob(L.cover2) + '") center/cover no-repeat' : "";
     $("backtext").textContent = (L.body || "").split(/\n\s*\n/)[0];
     $("addrto").textContent = L.to; $("postmark").textContent = L.date; $("postmark").hidden = !L.date;
@@ -715,14 +716,11 @@ textarea{min-height:180px;resize:vertical}
   const open = e => { const o = e.currentTarget; if (o.classList.contains("open")) return;
     if (o.id === "env") { if (o.classList.contains("flipping")) return;
       const flip = then => { o.classList.remove("flipping"); void o.offsetWidth; o.classList.add("flipping"); setTimeout(then, 350); setTimeout(() => o.classList.remove("flipping"), 720); };
-      if (!o.classList.contains("showfront")) { flip(() => { o.classList.add("showfront"); $("hint").textContent = "Tap the envelope to open it"; }); return; }
-      if (locked(cur) && !mine(cur)) { o.classList.remove("shake"); void o.offsetWidth; o.classList.add("shake"); return; }
-      flip(() => o.classList.remove("showfront")); setTimeout(() => { o.classList.add("open"); $("hint").style.visibility = "hidden";
-        timer = setTimeout(() => { letter.classList.add("show"); letter.setAttribute("aria-hidden", "false"); $("again").focus({preventScroll: true}); }, 1900); }, 760); return; }
+      if (o.classList.contains("showfront")) { flip(() => { o.classList.remove("showfront"); $("hint").textContent = "Tap the envelope to open it"; }); return; } }
     if (locked(cur) && !mine(cur)) { o.classList.remove("shake"); void o.offsetWidth; o.classList.add("shake"); return; } o.classList.add("open"); $("hint").style.visibility = "hidden";
     timer = setTimeout(() => { letter.classList.add("show"); letter.setAttribute("aria-hidden", "false"); $("again").focus({preventScroll: true}); }, o.id === "env" ? 1900 : 1500); };
   const closeLetter = quick => { clearTimeout(timer); if (document.body.classList.contains("stkedit")) { document.body.classList.remove("stkedit"); $("sbar").hidden = true; } letter.classList.remove("show"); letter.setAttribute("aria-hidden", "true");
-    const reset = () => { $("env").classList.remove("open", "showfront", "flipping"); if (cur && cur.look !== "postcard") $("hint").textContent = "Tap to turn the envelope over"; $("card").classList.remove("open"); $("hint").style.visibility = ""; };
+    const reset = () => { $("env").classList.remove("open", "flipping"); $("env").classList.add("showfront"); if (cur && cur.look !== "postcard") $("hint").textContent = "Tap to turn the envelope over"; $("card").classList.remove("open"); $("hint").style.visibility = ""; };
     if (quick === true) reset(); else setTimeout(() => { reset(); (cur && cur.look === "postcard" ? $("card") : $("env")).focus(); }, 400); };
   $("env").addEventListener("click", open); $("card").addEventListener("click", open);
   $("again").addEventListener("click", () => closeLetter());
@@ -755,8 +753,8 @@ textarea{min-height:180px;resize:vertical}
     const mk = (id, onDel) => { const d = document.createElement("div"); d.className = "th"; const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", "Remove photo"); x.onclick = onDel; d.append(img(id), x); return d; };
     $("adjust").hidden = !cur.cover; $("adjust2").hidden = !cur.cover2;
     const pc = cur.look === "postcard";
-    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Back cover (the flap side: shown first and on the home page, when the design is \"My photo\")";
-    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Front cover (shown after the envelope turns over. Empty shows plain paper with the name)";
+    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Back cover (the flap side, seen after the envelope turns over)";
+    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Front cover (seen first, and on the home page. Empty shows plain paper with the name)";
     const c2 = $("cover2thumb"); c2.textContent = ""; if (cur.cover2) c2.append(mk(cur.cover2, () => { cur.cover2 = ""; thumbs(); renderOne(); markDirty(); }));
     const c = $("coverthumb"); c.textContent = ""; if (cur.cover) c.append(mk(cur.cover, () => { cur.cover = ""; thumbs(); renderOne(); markDirty(); }));
     const g = $("bgthumb"); g.textContent = ""; if (cur.bg) g.append(mk(cur.bg, () => { cur.bg = ""; thumbs(); renderOne(); markDirty(); }));
@@ -832,7 +830,7 @@ textarea{min-height:180px;resize:vertical}
         try { const OW = 1600, OH = Math.round(1600 / 1.55), out = document.createElement("canvas"); out.width = OW; out.height = OH;
           clamp(); const k = OW / stage.clientWidth; st.ox *= 1; paint(out, OW, OH, k);
           const b = await new Promise((res, rej) => out.toBlob(x => x ? res(x) : rej(new Error("save")), "image/jpeg", .88));
-          const r = await assets.upload(b); cur[target] = r.id; if (addLib) addToLib([r.id]).catch(() => {});
+          const r = await assets.upload(b); cur[target] = r.id; if (target === "cover" && cur.look !== "postcard") cur.design = "photo"; if (addLib) addToLib([r.id]).catch(() => {});
           ro.disconnect(); close(); thumbs(); renderOne(); markDirty(); status("Cover ready. Press Save to keep it."); }
         catch (err) { e.target.disabled = false; e.target.textContent = "Use this picture"; status("Couldn't save the picture. Please try again."); } return; }
       for (const btn of box.querySelectorAll("[data-a=h],[data-a=v]")) btn.setAttribute("aria-pressed", String(btn.dataset.a === "h" ? st.fh : st.fv));
@@ -1054,6 +1052,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=12"></script>
+<script src="import.js?v=13"></script>
 </body>
 </html>
