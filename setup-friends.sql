@@ -60,7 +60,7 @@ $$;
 -- Each person has their own settings (sticker shelf, picture library). Background, font and drawing default to the host's.
 create or replace function public.docs_all(k text) returns table (path text, data jsonb)
 language plpgsql stable security definer set search_path = public as $$
-declare me public.people; host jsonb; own jsonb; bgk text[] := array['bg','bgFit','bgPos','bgSize','bgHaze','bgBlur','bgColor']; st jsonb;
+declare me public.people; host jsonb; own jsonb; bgk text[] := array['bg','bgFit','bgPos','bgSize','bgHaze','bgBlur','bgColor','bgRot','bgZoom','wordColor']; st jsonb;
 begin
   me := public.who(k); if me.id is null then return; end if;
   select o.data into host from public.docs o join public.people op on o.path = 'settings/' || op.id::text and op.is_owner;

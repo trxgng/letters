@@ -39,13 +39,10 @@ body{margin:0;color:var(--olive);font:16px/1.55 Nunito,system-ui,sans-serif;over
 .bgimg::before{content:"";position:absolute;left:0;top:0;height:100%;aspect-ratio:1080/1802;background:url(bg.jpg) left top/cover no-repeat;
   -webkit-mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);mask-composite:intersect}
 .bgimg.custom{display:block;top:calc(-1 * env(safe-area-inset-top, 0px));bottom:auto;height:calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));height:calc(100lvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));background:var(--bgcol,#ebe4dc)}
-.bgimg.custom::before{inset:0;width:auto;height:auto;aspect-ratio:auto;background:var(--bgurl,none) var(--bgpos,center center)/var(--bgsize,cover) var(--bgrep,no-repeat);-webkit-mask-image:none;mask-image:none}
+.bgimg.custom::before{inset:auto;left:50%;top:50%;width:var(--bw,100%);height:var(--bh,100%);aspect-ratio:auto;background:var(--bgurl,none) center/cover no-repeat;transform:translate(-50%,-50%) rotate(var(--brot,0deg)) scale(var(--bzoom,1));-webkit-mask-image:none;mask-image:none}
+#home{--wc:var(--olive)}#home h1.home,#home .sub,#home .empty,#home .item,#home .pill:not(.dark){color:var(--wc)}#home .pill:not(.dark){border-color:var(--wc)}
 .bgimg.custom::after{content:"";position:absolute;inset:0;background:rgba(246,242,236,var(--bghaze,.28))}
 html.custombg{background:var(--bgcol,#ebe4dc)}body.custom{background:transparent!important}
-body.custom h1.home{text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.85),0 0 50px rgba(255,255,255,.6)}
-body.custom .sub,body.custom .empty,body.custom .hint,body.custom .lock,body.custom .item b,body.custom .item small,body.custom .pill:not(.dark){text-shadow:0 0 1px #fff,0 0 2px #fff,0 0 3px #fff,0 0 6px #fff,0 0 10px #fff,0 0 18px rgba(255,255,255,.9);color:#26301c;font-weight:800}
-body.custom h1.home{color:#26301c}
-body.custom .pill:not(.dark){border-width:2px;box-shadow:0 0 0 1px rgba(255,255,255,.7),0 0 14px rgba(255,255,255,.55)}
 .appbtn{display:none}body.canapp .appbtn{display:inline-flex}
 @media (display-mode: standalone){body{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}}
 .bgp{max-height:86vh;overflow:auto;text-align:left}.bgp h3{font:400 40px/1 var(--hand),cursive;margin:0 0 8px}.bgp .lbl{font-weight:800;font-size:14px;margin:14px 0 6px;display:block}
@@ -505,15 +502,12 @@ textarea{min-height:180px;resize:vertical}
   <p class="note" id="bgwho" style="margin:0"></p>
   <span class="lbl">Picture</span>
   <div class="row2"><span class="thumb" id="bgthumbp"></span><label class="pill" style="position:relative">Choose picture<input type="file" accept="image/*" id="i-homebg" style="position:absolute;opacity:0;width:1px;height:1px"></label><button type="button" class="pill" id="bgnopic">No picture</button></div>
-  <span class="lbl">How the picture fits</span>
-  <div class="seg" id="bgfit"><button type="button" data-v="cover">Fill the screen</button><button type="button" data-v="contain">Whole picture</button><button type="button" data-v="repeat">Repeat as a pattern</button></div>
-  <div id="bgposbox"><span class="lbl">Show which part</span>
-  <div class="seg" id="bgpos"><button type="button" data-v="center top">Top</button><button type="button" data-v="center center">Middle</button><button type="button" data-v="center bottom">Bottom</button></div></div>
-  <div id="bgsizebox"><span class="lbl">Pattern size</span><input type="range" id="bgsize" min="80" max="700" step="10"></div>
+  <div id="bgadj"><span class="lbl">Picture size</span><input type="range" id="bgzoom" min="100" max="300" step="1">
+  <span class="lbl">Turn the picture</span>
+  <div class="row2"><button type="button" class="pill" id="bgrotl">↺ Rotate left</button><button type="button" class="pill" id="bgrotr">↻ Rotate right</button></div></div>
   <span class="lbl">Soft haze (makes words easier to read)</span><input type="range" id="bghaze" min="0" max="85" step="1">
-  <span class="lbl">Blur</span><input type="range" id="bgblur" min="0" max="16" step="1">
-  <span class="lbl">Colour (around the picture, or on its own)</span>
-  <div class="cols" id="bgcols"></div>
+  <span class="lbl">Colour of the words on the home page</span>
+  <div class="cols" id="wcols"></div>
   <div class="row2" style="margin-top:18px"><button type="button" class="pill" id="bghost" hidden>Use the host's background</button><span style="flex:1"></span><button type="button" class="pill" id="bgcancel">Cancel</button><button type="button" class="pill dark" id="bgsave">Save</button></div>
 </div></div>
 <div class="confirm" id="friends" hidden><div role="dialog" aria-modal="true" aria-labelledby="frt" class="fr">
@@ -531,9 +525,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=10"></script>
-<script src="supabase.js?v=10"></script>
-<script src="store.js?v=10"></script>
+<script src="config.js?v=11"></script>
+<script src="supabase.js?v=11"></script>
+<script src="store.js?v=11"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -575,7 +569,7 @@ textarea{min-height:180px;resize:vertical}
   };
 
   /* background */
-  const BGK = ["bg", "bgFit", "bgPos", "bgSize", "bgHaze", "bgBlur", "bgColor"];
+  const BGK = ["bg", "bgHaze", "bgRot", "bgZoom", "wordColor"];
   let bgDraft = null;
   const avgCache = {};
   const avgColour = src => avgCache[src] || (avgCache[src] = new Promise(res => { const im = new Image(); im.crossOrigin = "anonymous";
@@ -592,17 +586,18 @@ textarea{min-height:180px;resize:vertical}
   const hex2rgb = c => /^#[0-9a-f]{6}$/i.test(c || "") ? "rgb(" + [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)).join(",") + ")" : c;
   let bgSeq = 0;
   const applyBg = () => {
-    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, col = S.bgColor || "", box = document.querySelector(".bgimg"), st = box.style, H = document.documentElement;
-    const on = !!(id || col); box.classList.toggle("custom", on); document.body.classList.toggle("custom", on); H.classList.toggle("custombg", on);
+    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, box = document.querySelector(".bgimg"), st = box.style, H = document.documentElement;
+    const wc = /^#[0-9a-f]{6}$/i.test(S.wordColor || "") ? S.wordColor : ""; if (wc) $("home").style.setProperty("--wc", wc); else $("home").style.removeProperty("--wc");
+    const on = !!id; box.classList.toggle("custom", on); document.body.classList.toggle("custom", on); H.classList.toggle("custombg", on);
     const seq = ++bgSeq; H.style.background = "";
     if (!on) { st.removeProperty("--bgurl"); H.style.removeProperty("--bgcol"); $("themecol").setAttribute("content", "#ebe4dc"); return; }
-    const fit = own ? "cover" : (S.bgFit || "cover"), haze = own ? .28 : (S.bgHaze === undefined || S.bgHaze === "" ? .28 : +S.bgHaze / 100), blur = own ? 0 : (+S.bgBlur || 0);
-    st.setProperty("--bgsize", fit === "repeat" ? (+S.bgSize || 260) + "px auto" : fit); st.setProperty("--bgrep", fit === "repeat" ? "repeat" : "no-repeat");
-    st.setProperty("--bgpos", fit === "repeat" ? "left top" : (S.bgPos || "center center")); st.setProperty("--bghaze", String(haze));
-    const tintTo = t => { const c = mixHaze(hex2rgb(col) || t, haze) || "#ebe4dc"; st.setProperty("--bgcol", col || t || "#ebe4dc"); H.style.setProperty("--bgcol", c); $("themecol").setAttribute("content", c); };
-    if (!id) { st.removeProperty("--bgurl"); tintTo(""); return; }
+    const haze = own ? .28 : (S.bgHaze === undefined || S.bgHaze === "" ? .28 : +S.bgHaze / 100), rot = own ? 0 : ((+S.bgRot || 0) % 360 + 360) % 360, zoom = own ? 1 : Math.max(1, Math.min(3, (+S.bgZoom || 100) / 100));
+    const side = rot % 180 !== 0; st.setProperty("--brot", rot + "deg"); st.setProperty("--bzoom", String(zoom));
+    if (side) { st.setProperty("--bw", "max(100lvh, 100vh)"); st.setProperty("--bh", "100vw"); } else { st.removeProperty("--bw"); st.removeProperty("--bh"); }
+    st.setProperty("--bghaze", String(haze));
+    const tintTo = t => { const c = mixHaze(t, haze) || "#ebe4dc"; st.setProperty("--bgcol", t || "#ebe4dc"); H.style.setProperty("--bgcol", c); $("themecol").setAttribute("content", c); };
     const src = blob(id); st.setProperty("--bgurl", 'url("' + src + '")'); tintTo("");
-    Promise.all([avgColour(src), blur ? blurred(src, blur) : Promise.resolve(src)]).then(([t, u]) => { if (seq !== bgSeq) return; st.setProperty("--bgurl", 'url("' + u + '")'); tintTo(t); });
+    avgColour(src).then(t => { if (seq === bgSeq) tintTo(t); });
   };
   const saveSettings = async patch => { settings = {...settings, ...patch}; await db.doc("settings/main").set(settings); };
 
@@ -967,29 +962,26 @@ textarea{min-height:180px;resize:vertical}
     $("s-go").disabled = true; try { await STORE.setName(name); showSignin(false); renderHome(); if (cur) renderOne(); } catch (x) { $("s-err").textContent = "Couldn't save. Please try again."; } $("s-go").disabled = false; });
 
   /* background panel */
-  const BGCOLS = ["#ebe4dc", "#f6efe6", "#efd5cb", "#f4dde3", "#fae6d8", "#fbf3cf", "#dfe4d2", "#dff1e8", "#dcecf8", "#cbd6df", "#e9e3f4", "#d9cdc3", "#3c4630", "#2f3a4f", "#4a2f3a"];
+  const WCOLS = ["#3c4630", "#26301c", "#2e2a24", "#000000", "#ffffff", "#f6efe6", "#5e4248", "#8c6870", "#a3332f", "#9a7a2e", "#2f4a6b", "#4f6a85", "#6a52a0", "#3f7a5d"];
   const fillBgPanel = () => { const S = bgDraft;
     $("bgwho").textContent = STORE.isOwner() ? "Your friends see this background too, unless they choose their own." : (S.bgOwn ? "This is your own background. Only you see it." : "You're seeing the host's background. Change anything to make it your own.");
     $("bghost").hidden = STORE.isOwner() || !S.bgOwn;
-    $("bgthumbp").style.backgroundImage = S.bg ? 'url("' + blob(S.bg) + '")' : "none"; $("bgnopic").hidden = !S.bg;
-    const fit = S.bgFit || "cover";
-    for (const b of $("bgfit").children) b.setAttribute("aria-pressed", String(b.dataset.v === fit));
-    for (const b of $("bgpos").children) b.setAttribute("aria-pressed", String(b.dataset.v === (S.bgPos || "center center")));
-    $("bgposbox").hidden = fit === "repeat"; $("bgsizebox").hidden = fit !== "repeat";
-    $("bgsize").value = +S.bgSize || 260; $("bghaze").value = S.bgHaze === undefined || S.bgHaze === "" ? 28 : +S.bgHaze; $("bgblur").value = +S.bgBlur || 0;
-    const cb = $("bgcols"); cb.textContent = "";
-    for (const c of BGCOLS) { const b = document.createElement("button"); b.type = "button"; b.style.background = c; b.setAttribute("aria-label", "Colour " + c); b.setAttribute("aria-pressed", String((S.bgColor || "") === c)); b.onclick = () => bgSet({bgColor: c}); cb.append(b); }
-    const pick = document.createElement("input"); pick.type = "color"; pick.value = /^#[0-9a-f]{6}$/i.test(S.bgColor || "") ? S.bgColor : "#ebe4dc"; pick.setAttribute("aria-label", "Pick any colour"); pick.oninput = () => bgSet({bgColor: pick.value}, true); cb.append(pick);
+    $("bgthumbp").style.backgroundImage = S.bg ? 'url("' + blob(S.bg) + '")' : "none"; $("bgnopic").hidden = !S.bg; $("bgadj").hidden = !S.bg;
+    $("bgzoom").value = +S.bgZoom || 100; $("bghaze").value = S.bgHaze === undefined || S.bgHaze === "" ? 28 : +S.bgHaze;
+    const cb = $("wcols"); cb.textContent = "";
+    for (const c of WCOLS) { const b = document.createElement("button"); b.type = "button"; b.style.background = c; b.setAttribute("aria-label", "Word colour " + c); b.setAttribute("aria-pressed", String((S.wordColor || "#3c4630") === c)); b.onclick = () => bgSet({wordColor: c}); cb.append(b); }
+    const pick = document.createElement("input"); pick.type = "color"; pick.value = /^#[0-9a-f]{6}$/i.test(S.wordColor || "") ? S.wordColor : "#3c4630"; pick.setAttribute("aria-label", "Pick any colour"); pick.oninput = () => bgSet({wordColor: pick.value}, true); cb.append(pick);
   };
   const bgSet = (patch, quiet) => { bgDraft = {...bgDraft, ...patch, bgOwn: true}; applyBg(); if (!quiet) fillBgPanel(); };
   $("homebgbtn").addEventListener("click", () => { if (!db) return; bgDraft = {}; for (const k of BGK) if (settings[k] !== undefined) bgDraft[k] = settings[k]; bgDraft.bgOwn = !!settings.bgOwn;
     fillBgPanel(); applyBg(); $("bgpanel").hidden = false; });
-  $("bgfit").addEventListener("click", e => { const b = e.target.closest("button"); if (b) bgSet({bgFit: b.dataset.v}); });
-  $("bgpos").addEventListener("click", e => { const b = e.target.closest("button"); if (b) bgSet({bgPos: b.dataset.v}); });
-  for (const [id, k] of [["bgsize", "bgSize"], ["bghaze", "bgHaze"], ["bgblur", "bgBlur"]]) $(id).addEventListener("input", e => bgSet({[k]: +e.target.value}, true));
+  $("bgzoom").addEventListener("input", e => bgSet({bgZoom: +e.target.value}, true));
+  $("bghaze").addEventListener("input", e => bgSet({bgHaze: +e.target.value}, true));
+  $("bgrotl").addEventListener("click", () => bgSet({bgRot: ((+bgDraft.bgRot || 0) + 270) % 360}, true));
+  $("bgrotr").addEventListener("click", () => bgSet({bgRot: ((+bgDraft.bgRot || 0) + 90) % 360}, true));
   $("bgnopic").addEventListener("click", () => bgSet({bg: ""}));
   $("i-homebg").addEventListener("change", async e => { const f = e.target.files[0]; e.target.value = ""; if (!f || !assets) return;
-    try { toast("Uploading picture…"); bgSet({bg: await upload(f, 2200)}); toast("Picture ready. Press Save to keep it."); } catch (err) { toast("Couldn't use that picture. Try a JPEG or PNG."); } });
+    try { toast("Uploading picture…"); bgSet({bg: await upload(f, 2200), bgRot: 0, bgZoom: 100}); toast("Picture ready. Press Save to keep it."); } catch (err) { toast("Couldn't use that picture. Try a JPEG or PNG."); } });
   $("bghost").addEventListener("click", async () => { bgDraft = null; try { await saveSettings({bgOwn: false}); await STORE.refresh(); $("bgpanel").hidden = true; toast("Back to the host's background."); } catch (e) { toast("Couldn't save. Please try again."); } });
   $("bgcancel").addEventListener("click", () => { bgDraft = null; applyBg(); $("bgpanel").hidden = true; });
   $("bgsave").addEventListener("click", async () => { const d = bgDraft; $("bgsave").disabled = true;
@@ -1050,11 +1042,11 @@ textarea{min-height:180px;resize:vertical}
       if (!curId) renderHome();
     }, () => { clearTimeout(slow); live = true; renderHome(); });
     db.doc("settings/main").onSnapshot(s => { const v = s.exists ? s.data() : null; const str = k => v && typeof v[k] === "string" ? v[k] : ""; settings = {font: str("font"), fontName: str("fontName"), bg: str("bg"), motif: str("motif"), formUrl: str("formUrl"),
-      bgFit: str("bgFit"), bgPos: str("bgPos"), bgColor: str("bgColor"), bgSize: v && v.bgSize !== undefined ? v.bgSize : "", bgHaze: v && v.bgHaze !== undefined ? v.bgHaze : "", bgBlur: v && v.bgBlur !== undefined ? v.bgBlur : "", bgOwn: !!(v && v.bgOwn), library: v && Array.isArray(v.library) ? v.library.filter(x => typeof x === "string").slice(0, 120) : [], stickers: v && Array.isArray(v.stickers) ? v.stickers.filter(x => typeof x === "string").slice(0, 60) : []}; applyFont(); if (!bgDraft) applyBg(); applyMotif(); if ($("ed").classList.contains("show")) renderLib(); }, () => {});
+      wordColor: str("wordColor"), bgHaze: v && v.bgHaze !== undefined ? v.bgHaze : "", bgRot: v && v.bgRot !== undefined ? v.bgRot : "", bgZoom: v && v.bgZoom !== undefined ? v.bgZoom : "", bgOwn: !!(v && v.bgOwn), library: v && Array.isArray(v.library) ? v.library.filter(x => typeof x === "string").slice(0, 120) : [], stickers: v && Array.isArray(v.stickers) ? v.stickers.filter(x => typeof x === "string").slice(0, 60) : []}; applyFont(); if (!bgDraft) applyBg(); applyMotif(); if ($("ed").classList.contains("show")) renderLib(); }, () => {});
   };
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=10"></script>
+<script src="import.js?v=11"></script>
 </body>
 </html>
