@@ -70,7 +70,7 @@
   }
 
   /* reload by itself when a newer version of the site is uploaded (bump version.txt and the ?v= in index.html together) */
-  const VER = "7";
+  const VER = "8";
   setInterval(async () => { if (document.hidden || demo) return; try { const v = (await (await fetch("version.txt?" + Date.now(), {cache: "no-store"})).text()).trim();
     if (v && v !== VER && !document.querySelector("#ed.show,#letter.show,.crop,.confirm:not([hidden])") && !(document.getElementById("replytext") || {}).value) location.reload(); } catch (e) {} }, 120000);
 
