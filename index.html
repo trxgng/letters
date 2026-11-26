@@ -528,9 +528,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=13"></script>
-<script src="supabase.js?v=13"></script>
-<script src="store.js?v=13"></script>
+<script src="config.js?v=14"></script>
+<script src="supabase.js?v=14"></script>
+<script src="store.js?v=14"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -543,7 +543,7 @@ textarea{min-height:180px;resize:vertical}
   let db = null, assets = null, canEdit = !window.claude, live = false;
   let letters = new Map(), cur = null, curId = "", dirty = false, settings = {font: "", fontName: "", bg: "", motif: "", library: []};
   let BAKED = null; try { const el = $("baked"); if (el) BAKED = JSON.parse(el.textContent); } catch (e) {}
-  const blob = id => !id ? "" : BAKED ? ((BAKED.assets || {})[id] || "") : STORE.url(id);
+  const blob = id => !id ? "" : BAKED ? ((BAKED.assets || {})[id] || "") : /^(https?:|covers\/)/.test(id) ? id : STORE.url(id);
   const okReply = u => /^https:\/\//.test(u || "");
   const okForm = u => /^https:\/\/(forms\.gle\/|docs\.google\.com\/forms\/)[^\s<>"]*$/.test(u || "");
   const fmtDay = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ""); if (!m) return ""; return new Date(+m[1], m[2] - 1, +m[3]).toLocaleDateString("en-GB", {day: "numeric", month: "long", year: "numeric"}); };
@@ -1052,6 +1052,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=13"></script>
+<script src="import.js?v=14"></script>
 </body>
 </html>
