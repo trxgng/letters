@@ -319,7 +319,7 @@ textarea{min-height:180px;resize:vertical}
     <button class="pill dark" id="newletter">+ New letter</button>
     <button class="pill dark" id="newcard">+ New postcard</button>
     <button class="pill" id="friendsbtn" hidden>My friends</button>
-    <label class="pill" tabindex="0">Change background<input type="file" accept="image/*" id="i-homebg" style="position:absolute;opacity:0;width:1px;height:1px"></label>
+    <label class="pill" tabindex="0" id="homebgbtn">Change background<input type="file" accept="image/*" id="i-homebg" style="position:absolute;opacity:0;width:1px;height:1px"></label>
   </div>
   <div class="grid" id="grid"></div>
   <p class="empty" id="empty" hidden></p>
@@ -486,9 +486,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=3"></script>
-<script src="supabase.js?v=3"></script>
-<script src="store.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="supabase.js?v=4"></script>
+<script src="store.js?v=4"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -582,7 +582,7 @@ textarea{min-height:180px;resize:vertical}
     $("empty").hidden = list.length > 0;
     $("empty").textContent = !live && window.claude ? "Opening your letters…" : !canEdit ? "These letters are private. Enter your secret code to open them." : canEdit ? "No letters yet. Start one with the buttons above." : "There are no letters here yet.";
     loadCounts(); $("homesub").textContent = list.length ? list.length + (list.length === 1 ? " letter" : " letters") : "";
-    $("tools").hidden = !canEdit; $("friendsbtn").hidden = !STORE.isOwner();
+    $("tools").hidden = !canEdit; $("friendsbtn").hidden = !STORE.isOwner(); $("homebgbtn").hidden = !STORE.isOwner();
     applyBg();
   };
 
@@ -938,6 +938,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=3"></script>
+<script src="import.js?v=4"></script>
 </body>
 </html>
