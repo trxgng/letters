@@ -138,9 +138,9 @@ svg.f{width:100%;height:100%;display:block;overflow:visible}
 .swan{fill:none;stroke:var(--acc);stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round}.swan .w{stroke-width:.6;opacity:.85}.swan .h{stroke-width:2.6;opacity:.82;stroke-linecap:butt}.swan .h2{stroke-width:1.2;opacity:.75}
 .flap{position:absolute;left:0;right:0;top:0;height:70%;z-index:3;transform-origin:top center;filter:drop-shadow(0 2px 2px rgba(80,70,50,.12));transition:transform .7s cubic-bezier(.5,0,.3,1),z-index 0s .35s}
 .env.open .flap{transform:rotateX(180deg);z-index:0}
-.flapin{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,54.5% 90%,50% 98.5%,45.5% 90%);opacity:0;transition:opacity 0s .35s;pointer-events:none}
-.flapin i{position:absolute;inset:0;transform:scaleY(-1);background:var(--cov2) center/cover no-repeat}
-.env.open .flap .flapin.on{opacity:1}
+.efront{position:absolute;inset:0;z-index:6;border-radius:10px;display:none;background:var(--cov2) center/cover no-repeat,var(--tex),var(--env2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+.env.hasfront .efront{display:block}.env.hasfront.turned .efront{display:none}
+.env.flipping{animation:eflip .7s ease-in-out}@keyframes eflip{0%{transform:scaleX(1)}50%{transform:scaleX(0)}100%{transform:scaleX(1)}}
 .seal{position:absolute;left:50%;top:91%;width:16%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:4;pointer-events:none}
 .seal i{position:absolute;inset:0;display:grid;place-items:center;border-radius:48% 52% 50% 50%/52% 48% 52% 48%;
   background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--seal),#fff 28%),var(--seal) 48%,var(--seal2));
@@ -342,8 +342,9 @@ textarea{min-height:180px;resize:vertical}
         <path class="glue" d="M2,98 L72,50 Q77.5,46 83,50 L153,98"/><path class="fl" d="M0,100 L72,49 Q77.5,45 83,49 L155,100"/></svg></div>
       <div class="flap"><div class="penv"></div><svg class="f" viewBox="0 0 155 70" preserveAspectRatio="none" aria-hidden="true">
         <path class="fb" filter="url(#paper)" d="M0,0 L155,0 L84,63 Q77.5,69 71,63Z"/><path class="glue" d="M3,1 L72,62 Q77.5,67 83,62 L152,1"/><path class="fl" d="M0,0 L71,63 Q77.5,69 84,63 L155,0"/></svg>
-        <svg class="swan" viewBox="0 0 110 40" style="position:absolute;left:30%;top:8%;width:40%;height:auto;overflow:visible" aria-hidden="true"><use href="#swans"/></svg><img class="mimg" alt="" style="position:absolute;left:28%;top:5%;width:44%;height:42%"><div class="flapin"><i></i></div>
+        <svg class="swan" viewBox="0 0 110 40" style="position:absolute;left:30%;top:8%;width:40%;height:auto;overflow:visible" aria-hidden="true"><use href="#swans"/></svg><img class="mimg" alt="" style="position:absolute;left:28%;top:5%;width:44%;height:42%">
       </div>
+    <div class="efront"></div>
     </button>
     <button class="obj card" id="card" aria-label="Turn the postcard over" hidden>
       <div class="in">
@@ -435,11 +436,11 @@ textarea{min-height:180px;resize:vertical}
     <label id="c1label">Front cover</label>
     <div class="thumbs" id="coverthumb"></div>
     <button type="button" class="up" id="adjust" hidden style="margin:0 0 10px;background:#fff">Adjust, rotate or flip cover</button>
-    <label class="up">Upload front photo<input type="file" accept="image/*" id="i-cover"></label>
+    <label class="up">Upload photo<input type="file" accept="image/*" id="i-cover"></label>
     <label style="margin-top:16px" id="c2label">Back cover</label>
     <div class="thumbs" id="cover2thumb"></div>
-    <button type="button" class="up" id="adjust2" hidden style="margin:0 0 10px;background:#fff">Adjust, rotate or flip back cover</button>
-    <label class="up">Upload back photo<input type="file" accept="image/*" id="i-cover2"></label>
+    <button type="button" class="up" id="adjust2" hidden style="margin:0 0 10px;background:#fff">Adjust, rotate or flip this cover</button>
+    <label class="up">Upload photo<input type="file" accept="image/*" id="i-cover2"></label>
     <label style="margin-top:16px">Or pick from your picture library</label>
     <p class="small">Save pictures from Pinterest to your phone, add them here once, then tap one to use it as the postcard front.</p>
     <div class="lib" id="lib"></div>
@@ -493,9 +494,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=6"></script>
-<script src="supabase.js?v=6"></script>
-<script src="store.js?v=6"></script>
+<script src="config.js?v=7"></script>
+<script src="supabase.js?v=7"></script>
+<script src="store.js?v=7"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -604,8 +605,9 @@ textarea{min-height:180px;resize:vertical}
     const cv = $("cover"); cv.textContent = "";
     if (L.cover) { cv.append(img(L.cover)); delete cv.dataset.art; } else cv.dataset.art = L.coverArt;
     const bk = $("env").querySelector(".back"), pb = document.querySelector("#card .pback");
-    const fi = $("env").querySelector(".flapin"); fi.classList.toggle("on", !!L.cover2); if (L.cover2) fi.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")'); else fi.style.removeProperty("--cov2");
-    bk.style.background = L.cover2 ? 'url("' + blob(L.cover2) + '") center/cover no-repeat' : "";
+    const ev = $("env"), ef = ev.querySelector(".efront"), hf = !card && !!L.cover2; ev.classList.toggle("hasfront", hf); if (!hf) ev.classList.remove("turned");
+    if (hf) ef.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")'); else ef.style.removeProperty("--cov2");
+    if (hf && !ev.classList.contains("turned") && !ev.classList.contains("open")) $("hint").textContent = "Tap to turn the envelope over";
     pb.style.background = L.cover2 ? 'linear-gradient(rgba(255,253,248,.74),rgba(255,253,248,.74)), url("' + blob(L.cover2) + '") center/cover no-repeat' : "";
     $("backtext").textContent = (L.body || "").split(/\n\s*\n/)[0];
     $("addrto").textContent = L.to; $("postmark").textContent = L.date; $("postmark").hidden = !L.date;
@@ -652,10 +654,12 @@ textarea{min-height:180px;resize:vertical}
   /* open / close */
   const letter = $("letter"); let timer;
   const open = e => { const o = e.currentTarget; if (o.classList.contains("open")) return;
+    if (o.classList.contains("hasfront") && !o.classList.contains("turned")) { o.classList.remove("flipping"); void o.offsetWidth; o.classList.add("flipping");
+      setTimeout(() => { o.classList.add("turned"); $("hint").textContent = "Tap the envelope to open it"; }, 350); setTimeout(() => o.classList.remove("flipping"), 750); return; }
     if (locked(cur) && !mine(cur)) { o.classList.remove("shake"); void o.offsetWidth; o.classList.add("shake"); return; } o.classList.add("open"); $("hint").style.visibility = "hidden";
     timer = setTimeout(() => { letter.classList.add("show"); letter.setAttribute("aria-hidden", "false"); $("again").focus({preventScroll: true}); }, o.id === "env" ? 1900 : 1500); };
   const closeLetter = quick => { clearTimeout(timer); if (document.body.classList.contains("stkedit")) { document.body.classList.remove("stkedit"); $("sbar").hidden = true; } letter.classList.remove("show"); letter.setAttribute("aria-hidden", "true");
-    const reset = () => { $("env").classList.remove("open"); $("card").classList.remove("open"); $("hint").style.visibility = ""; };
+    const reset = () => { $("env").classList.remove("open", "turned"); if (cur && cur.cover2 && cur.look !== "postcard") $("hint").textContent = "Tap to turn the envelope over"; $("card").classList.remove("open"); $("hint").style.visibility = ""; };
     if (quick === true) reset(); else setTimeout(() => { reset(); (cur && cur.look === "postcard" ? $("card") : $("env")).focus(); }, 400); };
   $("env").addEventListener("click", open); $("card").addEventListener("click", open);
   $("again").addEventListener("click", () => closeLetter());
@@ -689,8 +693,8 @@ textarea{min-height:180px;resize:vertical}
     const mk = (id, onDel) => { const d = document.createElement("div"); d.className = "th"; const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", "Remove photo"); x.onclick = onDel; d.append(img(id), x); return d; };
     $("adjust").hidden = !cur.cover; $("adjust2").hidden = !cur.cover2;
     const pc = cur.look === "postcard";
-    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Front cover (the outside of the envelope, shown when its design is \"My photo\")";
-    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Back cover (the inside of the envelope, seen when it opens)";
+    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Back cover (the flap side you open, shown when the design is \"My photo\")";
+    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Front cover (the side seen first. Tap it and the envelope turns over to the flap side)";
     const c2 = $("cover2thumb"); c2.textContent = ""; if (cur.cover2) c2.append(mk(cur.cover2, () => { cur.cover2 = ""; thumbs(); renderOne(); markDirty(); }));
     const c = $("coverthumb"); c.textContent = ""; if (cur.cover) c.append(mk(cur.cover, () => { cur.cover = ""; thumbs(); renderOne(); markDirty(); }));
     const g = $("bgthumb"); g.textContent = ""; if (cur.bg) g.append(mk(cur.bg, () => { cur.bg = ""; thumbs(); renderOne(); markDirty(); }));
@@ -731,7 +735,7 @@ textarea{min-height:180px;resize:vertical}
   /* cropper: fit to the envelope/postcard shape, rotate, flip */
   function openCropper(src, done, addLib, target) { target = target === "cover2" ? "cover2" : "cover";
     const box = document.createElement("div"); box.className = "crop";
-    box.innerHTML = '<div class="cropbox" role="dialog" aria-modal="true" aria-label="Adjust cover"><h3>Adjust your ' + (target === "cover2" ? "back" : "front") + ' cover</h3><div class="cstage"><canvas></canvas></div>' +
+    box.innerHTML = '<div class="cropbox" role="dialog" aria-modal="true" aria-label="Adjust cover"><h3>Adjust your cover</h3><div class="cstage"><canvas></canvas></div>' +
       '<div class="zoom"><span>Zoom</span><input type="range" min="1" max="4" step="0.01" value="1" aria-label="Zoom"></div>' +
       '<div class="ctools"><button type="button" data-a="l">↺ Rotate left</button><button type="button" data-a="r">↻ Rotate right</button><button type="button" data-a="h">⇆ Flip sideways</button><button type="button" data-a="v">⇅ Flip upside down</button><button type="button" data-a="reset">Reset</button></div>' +
       '<p class="small" style="margin:0">Drag the picture to move it. The frame is the exact shape of your envelope and postcard.</p>' +
@@ -767,7 +771,7 @@ textarea{min-height:180px;resize:vertical}
           clamp(); const k = OW / stage.clientWidth; st.ox *= 1; paint(out, OW, OH, k);
           const b = await new Promise((res, rej) => out.toBlob(x => x ? res(x) : rej(new Error("save")), "image/jpeg", .88));
           const r = await assets.upload(b); cur[target] = r.id; if (addLib) addToLib([r.id]).catch(() => {});
-          ro.disconnect(); close(); thumbs(); renderOne(); markDirty(); status((target === "cover2" ? "Back" : "Front") + " cover ready. Press Save to keep it."); }
+          ro.disconnect(); close(); thumbs(); renderOne(); markDirty(); status("Cover ready. Press Save to keep it."); }
         catch (err) { e.target.disabled = false; e.target.textContent = "Use this picture"; status("Couldn't save the picture. Please try again."); } return; }
       for (const btn of box.querySelectorAll("[data-a=h],[data-a=v]")) btn.setAttribute("aria-pressed", String(btn.dataset.a === "h" ? st.fh : st.fv));
       draw(); });
@@ -892,7 +896,7 @@ textarea{min-height:180px;resize:vertical}
   $("replysend").addEventListener("click", async () => { const t = $("replytext").value.trim(); if (!t) { toast("Write something first."); return; }
     const btn = $("replysend"); btn.disabled = true; btn.textContent = "Sending…";
     try { await STORE.addReply(curId, t); $("replytext").value = ""; toast("Sent! ♡"); loadReplies(); }
-    catch (e) { toast("Couldn't send. Please try again."); }
+    catch (e) { toast("Couldn't send. Please refresh the page and try again." + (e && e.message ? " (" + e.message + ")" : "")); }
     btn.disabled = false; btn.textContent = "Send my reply ♡"; });
 
   /* welcome: secret code + name */
@@ -956,6 +960,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=6"></script>
+<script src="import.js?v=7"></script>
 </body>
 </html>
