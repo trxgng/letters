@@ -155,7 +155,10 @@ svg.f{width:100%;height:100%;display:block;overflow:visible}
 .flap{position:absolute;left:0;right:0;top:0;height:70%;z-index:3;transform-origin:top center;filter:drop-shadow(0 2px 2px rgba(80,70,50,.12));transition:transform .7s cubic-bezier(.5,0,.3,1),z-index 0s .35s}
 .env.open .flap{transform:rotateX(180deg);z-index:0}
 .efront{position:absolute;inset:0;z-index:6;border-radius:10px;display:none;background:var(--cov2) center/cover no-repeat,var(--tex),var(--env2);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
-.env.hasfront .efront{display:block}.env.hasfront.turned .efront{display:none}
+.env.showfront .efront{display:block}.efront.plain{background:var(--tex),linear-gradient(180deg,var(--env),var(--env2))}
+.eto{position:absolute;left:38%;top:52%;font:400 clamp(30px,8vw,52px)/1.1 var(--hand),cursive;color:var(--ink);display:none}.efront.plain .eto{display:block}
+.estamp{position:absolute;right:6%;top:9%;width:13%;aspect-ratio:.8;border:2px dashed var(--line);border-radius:3px;display:none}.efront.plain .estamp{display:block}
+#home .pill.dark{background:var(--wc);border-color:var(--wc);color:var(--wct,#fff)}
 .env.flipping{animation:eflip .7s ease-in-out}@keyframes eflip{0%{transform:scaleX(1)}50%{transform:scaleX(0)}100%{transform:scaleX(1)}}
 .seal{position:absolute;left:50%;top:91%;width:16%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:4;pointer-events:none}
 .seal i{position:absolute;inset:0;display:grid;place-items:center;border-radius:48% 52% 50% 50%/52% 48% 52% 48%;
@@ -362,7 +365,7 @@ textarea{min-height:180px;resize:vertical}
         <path class="fb" filter="url(#paper)" d="M0,0 L155,0 L84,63 Q77.5,69 71,63Z"/><path class="glue" d="M3,1 L72,62 Q77.5,67 83,62 L152,1"/><path class="fl" d="M0,0 L71,63 Q77.5,69 84,63 L155,0"/></svg>
         <svg class="swan" viewBox="0 0 110 40" style="position:absolute;left:30%;top:8%;width:40%;height:auto;overflow:visible" aria-hidden="true"><use href="#swans"/></svg><img class="mimg" alt="" style="position:absolute;left:28%;top:5%;width:44%;height:42%">
       </div>
-    <div class="efront"></div>
+    <div class="efront"><span class="estamp"></span><b class="eto"></b></div>
     </button>
     <button class="obj card" id="card" aria-label="Turn the postcard over" hidden>
       <div class="in">
@@ -525,9 +528,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=11"></script>
-<script src="supabase.js?v=11"></script>
-<script src="store.js?v=11"></script>
+<script src="config.js?v=12"></script>
+<script src="supabase.js?v=12"></script>
+<script src="store.js?v=12"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -587,7 +590,7 @@ textarea{min-height:180px;resize:vertical}
   let bgSeq = 0;
   const applyBg = () => {
     const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, box = document.querySelector(".bgimg"), st = box.style, H = document.documentElement;
-    const wc = /^#[0-9a-f]{6}$/i.test(S.wordColor || "") ? S.wordColor : ""; if (wc) $("home").style.setProperty("--wc", wc); else $("home").style.removeProperty("--wc");
+    const wc = /^#[0-9a-f]{6}$/i.test(S.wordColor || "") ? S.wordColor : ""; if (wc) { $("home").style.setProperty("--wc", wc); const n = parseInt(wc.slice(1), 16), lum = .299 * (n >> 16) + .587 * (n >> 8 & 255) + .114 * (n & 255); $("home").style.setProperty("--wct", lum > 160 ? "#26301c" : "#fff"); } else { $("home").style.removeProperty("--wc"); $("home").style.removeProperty("--wct"); }
     const on = !!id; box.classList.toggle("custom", on); document.body.classList.toggle("custom", on); H.classList.toggle("custombg", on);
     const seq = ++bgSeq; H.style.background = "";
     if (!on) { st.removeProperty("--bgurl"); H.style.removeProperty("--bgcol"); $("themecol").setAttribute("content", "#ebe4dc"); return; }
@@ -661,9 +664,9 @@ textarea{min-height:180px;resize:vertical}
     const cv = $("cover"); cv.textContent = "";
     if (L.cover) { cv.append(img(L.cover)); delete cv.dataset.art; } else cv.dataset.art = L.coverArt;
     const bk = $("env").querySelector(".back"), pb = document.querySelector("#card .pback");
-    const ev = $("env"), ef = ev.querySelector(".efront"), hf = !card && !!L.cover2; ev.classList.toggle("hasfront", hf); if (!hf) ev.classList.remove("turned");
-    if (hf) ef.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")'); else ef.style.removeProperty("--cov2");
-    if (hf && !ev.classList.contains("turned") && !ev.classList.contains("open")) $("hint").textContent = "Tap to turn the envelope over";
+    const ev = $("env"), ef = ev.querySelector(".efront"); ef.classList.toggle("plain", !L.cover2); ef.querySelector(".eto").textContent = L.to ? "To " + L.to : "";
+    if (L.cover2) ef.style.setProperty("--cov2", 'url("' + blob(L.cover2) + '")'); else ef.style.removeProperty("--cov2");
+    if (!card && !ev.classList.contains("open")) $("hint").textContent = ev.classList.contains("showfront") ? "Tap the envelope to open it" : "Tap to turn the envelope over";
     pb.style.background = L.cover2 ? 'linear-gradient(rgba(255,253,248,.74),rgba(255,253,248,.74)), url("' + blob(L.cover2) + '") center/cover no-repeat' : "";
     $("backtext").textContent = (L.body || "").split(/\n\s*\n/)[0];
     $("addrto").textContent = L.to; $("postmark").textContent = L.date; $("postmark").hidden = !L.date;
@@ -710,12 +713,16 @@ textarea{min-height:180px;resize:vertical}
   /* open / close */
   const letter = $("letter"); let timer;
   const open = e => { const o = e.currentTarget; if (o.classList.contains("open")) return;
-    if (o.classList.contains("hasfront") && !o.classList.contains("turned")) { o.classList.remove("flipping"); void o.offsetWidth; o.classList.add("flipping");
-      setTimeout(() => { o.classList.add("turned"); $("hint").textContent = "Tap the envelope to open it"; }, 350); setTimeout(() => o.classList.remove("flipping"), 750); return; }
+    if (o.id === "env") { if (o.classList.contains("flipping")) return;
+      const flip = then => { o.classList.remove("flipping"); void o.offsetWidth; o.classList.add("flipping"); setTimeout(then, 350); setTimeout(() => o.classList.remove("flipping"), 720); };
+      if (!o.classList.contains("showfront")) { flip(() => { o.classList.add("showfront"); $("hint").textContent = "Tap the envelope to open it"; }); return; }
+      if (locked(cur) && !mine(cur)) { o.classList.remove("shake"); void o.offsetWidth; o.classList.add("shake"); return; }
+      flip(() => o.classList.remove("showfront")); setTimeout(() => { o.classList.add("open"); $("hint").style.visibility = "hidden";
+        timer = setTimeout(() => { letter.classList.add("show"); letter.setAttribute("aria-hidden", "false"); $("again").focus({preventScroll: true}); }, 1900); }, 760); return; }
     if (locked(cur) && !mine(cur)) { o.classList.remove("shake"); void o.offsetWidth; o.classList.add("shake"); return; } o.classList.add("open"); $("hint").style.visibility = "hidden";
     timer = setTimeout(() => { letter.classList.add("show"); letter.setAttribute("aria-hidden", "false"); $("again").focus({preventScroll: true}); }, o.id === "env" ? 1900 : 1500); };
   const closeLetter = quick => { clearTimeout(timer); if (document.body.classList.contains("stkedit")) { document.body.classList.remove("stkedit"); $("sbar").hidden = true; } letter.classList.remove("show"); letter.setAttribute("aria-hidden", "true");
-    const reset = () => { $("env").classList.remove("open", "turned"); if (cur && cur.cover2 && cur.look !== "postcard") $("hint").textContent = "Tap to turn the envelope over"; $("card").classList.remove("open"); $("hint").style.visibility = ""; };
+    const reset = () => { $("env").classList.remove("open", "showfront", "flipping"); if (cur && cur.look !== "postcard") $("hint").textContent = "Tap to turn the envelope over"; $("card").classList.remove("open"); $("hint").style.visibility = ""; };
     if (quick === true) reset(); else setTimeout(() => { reset(); (cur && cur.look === "postcard" ? $("card") : $("env")).focus(); }, 400); };
   $("env").addEventListener("click", open); $("card").addEventListener("click", open);
   $("again").addEventListener("click", () => closeLetter());
@@ -748,8 +755,8 @@ textarea{min-height:180px;resize:vertical}
     const mk = (id, onDel) => { const d = document.createElement("div"); d.className = "th"; const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", "Remove photo"); x.onclick = onDel; d.append(img(id), x); return d; };
     $("adjust").hidden = !cur.cover; $("adjust2").hidden = !cur.cover2;
     const pc = cur.look === "postcard";
-    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Back cover (the flap side you open, shown when the design is \"My photo\")";
-    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Front cover (the side seen first. Tap it and the envelope turns over to the flap side)";
+    $("c1label").textContent = pc ? "Front cover (the picture side)" : "Back cover (the flap side: shown first and on the home page, when the design is \"My photo\")";
+    $("c2label").textContent = pc ? "Back cover (behind your writing, softly faded so the words stay clear)" : "Front cover (shown after the envelope turns over. Empty shows plain paper with the name)";
     const c2 = $("cover2thumb"); c2.textContent = ""; if (cur.cover2) c2.append(mk(cur.cover2, () => { cur.cover2 = ""; thumbs(); renderOne(); markDirty(); }));
     const c = $("coverthumb"); c.textContent = ""; if (cur.cover) c.append(mk(cur.cover, () => { cur.cover = ""; thumbs(); renderOne(); markDirty(); }));
     const g = $("bgthumb"); g.textContent = ""; if (cur.bg) g.append(mk(cur.bg, () => { cur.bg = ""; thumbs(); renderOne(); markDirty(); }));
@@ -1047,6 +1054,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=11"></script>
+<script src="import.js?v=12"></script>
 </body>
 </html>
