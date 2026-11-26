@@ -33,7 +33,14 @@ body{margin:0;color:var(--olive);font:16px/1.55 Nunito,system-ui,sans-serif;over
 .bgimg{position:fixed;left:0;right:0;top:0;height:100vh;height:100lvh;z-index:-1;overflow:hidden;background:linear-gradient(#eae7e1,#ebe3db)}
 .bgimg::before{content:"";position:absolute;left:0;top:0;height:100%;aspect-ratio:1080/1802;background:url(bg.jpg) left top/cover no-repeat;
   -webkit-mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,#000 80%,transparent),linear-gradient(#000 85%,transparent);mask-composite:intersect}
-.bgimg.custom{background:var(--bgcol,#ebe4dc)}
+.bgimg.custom{display:none}
+html.custombg{min-height:100%;background-color:var(--bgcol,#ebe4dc)}
+body.custom{background:transparent!important;min-height:100vh;min-height:100lvh}
+body.custom h1.home{text-shadow:0 0 2px #fff,0 0 10px rgba(255,255,255,.95),0 0 26px rgba(255,255,255,.85),0 0 50px rgba(255,255,255,.6)}
+body.custom .sub,body.custom .empty,body.custom .hint,body.custom .lock{display:inline-block;background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);padding:4px 12px;border-radius:999px;text-shadow:none}
+body.custom .hint{display:inline-flex}body.custom .lock{display:grid}body.custom .sub:empty{display:none}body.custom .empty{border-radius:14px;padding:10px 14px}
+body.custom .pill:not(.dark){background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+body.custom .item>div:not(.mini){background:rgba(255,255,255,.8);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:12px;padding:4px 10px 6px}
 .bgimg.custom::before{inset:calc(var(--bgblur,0px) * -2);width:auto;height:auto;aspect-ratio:auto;background:var(--bgurl,none) var(--bgpos,center center)/var(--bgsize,cover) var(--bgrep,no-repeat);filter:blur(var(--bgblur,0px));-webkit-mask-image:none;mask-image:none}
 .bgimg.custom::after{content:"";position:absolute;inset:0;background:rgba(246,242,236,var(--bghaze,.28))}
 .bgp{max-height:86vh;overflow:auto;text-align:left}.bgp h3{font:400 40px/1 var(--hand),cursive;margin:0 0 8px}.bgp .lbl{font-weight:800;font-size:14px;margin:14px 0 6px;display:block}
@@ -519,9 +526,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=8"></script>
-<script src="supabase.js?v=8"></script>
-<script src="store.js?v=8"></script>
+<script src="config.js?v=9"></script>
+<script src="supabase.js?v=9"></script>
+<script src="store.js?v=9"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -572,17 +579,28 @@ textarea{min-height:180px;resize:vertical}
       const n = d.length / 4; res("rgb(" + Math.round(r / n) + "," + Math.round(gg / n) + "," + Math.round(b / n) + ")"); } catch (e) { res(""); } };
     im.onerror = () => res(""); im.src = src; }));
   const mixHaze = (rgb, h) => { const m = /rgb\((\d+),(\d+),(\d+)\)/.exec(rgb || ""); if (!m) return rgb; const t = [246, 242, 236]; return "rgb(" + [1, 2, 3].map(i => Math.round(+m[i] * (1 - h) + t[i - 1] * h)).join(",") + ")"; };
+  const blurCache = {};
+  const blurred = (src, px) => blurCache[src + "|" + px] || (blurCache[src + "|" + px] = new Promise(res => { const im = new Image(); im.crossOrigin = "anonymous";
+    im.onload = () => { try { const k = Math.min(1, 1400 / Math.max(im.width, im.height)), W = Math.round(im.width * k), H = Math.round(im.height * k), c = document.createElement("canvas"); c.width = W; c.height = H;
+      const g = c.getContext("2d"); g.filter = "blur(" + (px * k * 1.5) + "px)"; const m = px * 3; g.drawImage(im, -m, -m, W + 2 * m, H + 2 * m); res(c.toDataURL("image/jpeg", .85)); } catch (e) { res(src); } };
+    im.onerror = () => res(src); im.src = src; }));
+  const hex2rgb = c => /^#[0-9a-f]{6}$/i.test(c || "") ? "rgb(" + [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)).join(",") + ")" : c;
+  let bgSeq = 0;
   const applyBg = () => {
-    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, col = S.bgColor || "", box = document.querySelector(".bgimg"), st = box.style;
-    const on = !!(id || col); box.classList.toggle("custom", on); document.body.classList.toggle("custom", on);
+    const S = bgDraft || settings, own = !bgDraft && cur && cur.bg, id = own ? cur.bg : S.bg, col = S.bgColor || "", box = document.querySelector(".bgimg"), H = document.documentElement;
+    const on = !!(id || col); box.classList.toggle("custom", on); document.body.classList.toggle("custom", on); H.classList.toggle("custombg", on);
+    const seq = ++bgSeq;
+    if (!on) { H.style.background = ""; $("themecol").setAttribute("content", "#ebe4dc"); return; }
     const fit = own ? "cover" : (S.bgFit || "cover"), haze = own ? .28 : (S.bgHaze === undefined || S.bgHaze === "" ? .28 : +S.bgHaze / 100), blur = own ? 0 : (+S.bgBlur || 0);
-    if (id) st.setProperty("--bgurl", 'url("' + blob(id) + '")'); else st.removeProperty("--bgurl");
-    st.setProperty("--bgsize", fit === "repeat" ? (+S.bgSize || 260) + "px auto" : fit); st.setProperty("--bgrep", fit === "repeat" ? "repeat" : "no-repeat");
-    st.setProperty("--bgpos", fit === "repeat" ? "left top" : (S.bgPos || "center center")); st.setProperty("--bghaze", String(haze)); st.setProperty("--bgblur", blur + "px");
-    if (col) st.setProperty("--bgcol", col); else st.removeProperty("--bgcol");
-    const paint = c => { c = c || "#ebe4dc"; document.documentElement.style.background = c; document.body.style.background = "transparent"; $("themecol").setAttribute("content", c); };
-    if (!on) { document.documentElement.style.background = ""; document.body.style.background = ""; $("themecol").setAttribute("content", "#ebe4dc"); return; }
-    if (id && fit === "cover") avgColour(blob(id)).then(c => paint(mixHaze(c, haze) || col)); else paint(col ? mixHaze(col.startsWith("#") ? "rgb(" + [1, 3, 5].map(i => parseInt(col.slice(i, i + 2), 16)).join(",") + ")" : col, haze) : "#ebe4dc");
+    const size = fit === "repeat" ? (+S.bgSize || 260) + "px auto" : fit, rep = fit === "repeat" ? "repeat" : "no-repeat", pos = fit === "repeat" ? "left top" : (S.bgPos || "center center");
+    const veil = "linear-gradient(rgba(246,242,236," + haze + "),rgba(246,242,236," + haze + "))";
+    const paint = (url, tint) => { if (seq !== bgSeq) return;
+      H.style.background = veil + (url ? ', url("' + url + '") ' + pos + " / " + size + " " + rep : "") + ", " + (col || tint || "#ebe4dc");
+      $("themecol").setAttribute("content", mixHaze(hex2rgb(col) || tint, haze) || "#ebe4dc"); };
+    if (!id) { paint("", ""); return; }
+    const src = blob(id);
+    paint(src, "");
+    Promise.all([avgColour(src), blur ? blurred(src, blur) : Promise.resolve(src)]).then(([t, u]) => paint(u, t));
   };
   const saveSettings = async patch => { settings = {...settings, ...patch}; await db.doc("settings/main").set(settings); };
 
@@ -1028,6 +1046,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=8"></script>
+<script src="import.js?v=9"></script>
 </body>
 </html>
