@@ -444,7 +444,7 @@ textarea{min-height:180px;resize:vertical}
     <p class="small">Save pictures from Pinterest to your phone, add them here once, then tap one to use it as the postcard front.</p>
     <div class="lib" id="lib"></div>
     <label class="up">Add pictures to library<input type="file" accept="image/*" multiple id="i-lib"></label>
-    <label style="margin-top:16px">Photos inside the letter (up to 4)</label>
+    <label style="margin-top:16px">Photos inside the letter (up to 5)</label>
     <div class="thumbs" id="picthumbs"></div>
     <label class="up">Add photos<input type="file" accept="image/*" multiple id="i-pics"></label>
   </fieldset>
@@ -493,9 +493,9 @@ textarea{min-height:180px;resize:vertical}
   <div class="seg"><button type="submit" id="s-go" style="background:var(--olive);color:#fff;border-color:var(--olive);flex:1">Open my letters</button></div></form>
 </div></div>
 
-<script src="config.js?v=5"></script>
-<script src="supabase.js?v=5"></script>
-<script src="store.js?v=5"></script>
+<script src="config.js?v=6"></script>
+<script src="supabase.js?v=6"></script>
+<script src="store.js?v=6"></script>
 <script>
 {
   const SHARE = "https://claude.ai/artifact/V4oeoq1pHzgP7dwZn9eGQB";
@@ -521,7 +521,7 @@ textarea{min-height:180px;resize:vertical}
     const KS = ["flower","leaf","daisy","heart","star","bow","tape","swans"], num = (x, a, b, d) => { x = +x; return isFinite(x) ? Math.min(b, Math.max(a, x)) : d; };
     o.stickers = Array.isArray(v.stickers) ? v.stickers.filter(t => t && (KS.includes(t.k) || (t.k === "img" && typeof t.id === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(t.id)))).slice(0, 40).map(t => ({k: t.k, ...(t.k === "img" ? {id: t.id} : {}), x: num(t.x, 0, 100, 50), y: num(t.y, 0, 100, 50), w: num(t.w, 4, 70, 14), r: num(t.r, -180, 180, 0)})) : [];
     o.toIds = Array.isArray(v.toIds) ? v.toIds.filter(x => typeof x === "string").slice(0, 200) : [];
-    o.pics = Array.isArray(v.pics) ? v.pics.filter(x => typeof x === "string").slice(0, 4) : [];
+    o.pics = Array.isArray(v.pics) ? v.pics.filter(x => typeof x === "string").slice(0, 5) : [];
     if (!PALS.includes(o.pal)) o.pal = "pearl"; if (o.look !== "postcard") o.look = "envelope"; if (!DESIGNS.includes(o.design)) o.design = "swans"; if (!ARTS.includes(o.coverArt)) o.coverArt = "lilies"; o.updated = +v.updated || 0; return o; };
   const toast = t => { const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2600); };
   const img = (id, cls) => { const im = new Image(); im.src = blob(id); im.alt = ""; im.loading = "lazy"; if (cls) im.className = cls; return im; };
@@ -774,7 +774,7 @@ textarea{min-height:180px;resize:vertical}
     box.querySelector("[data-a=ok]").focus();
   }
   $("i-pics").addEventListener("change", async e => { const files = [...e.target.files]; e.target.value = ""; if (!files.length || !needAssets()) return;
-    const room = 4 - cur.pics.length; if (room <= 0) { status("You already have 4 photos. Remove one first."); return; }
+    const room = 5 - cur.pics.length; if (room <= 0) { status("You already have 5 photos. Remove one first."); return; }
     try { for (const [i, f] of files.slice(0, room).entries()) { status("Uploading photo " + (i + 1) + "…"); cur.pics = [...cur.pics, await upload(f)]; thumbs(); renderOne(); } markDirty(); }
     catch (err) { status("Upload failed: " + (err && err.message || "try again")); } });
   $("i-bg").addEventListener("change", async e => { const f = e.target.files[0]; e.target.value = ""; if (!f || !needAssets()) return;
@@ -956,6 +956,6 @@ textarea{min-height:180px;resize:vertical}
   boot().catch(() => { live = true; renderHome(); });
 }
 </script>
-<script src="import.js?v=5"></script>
+<script src="import.js?v=6"></script>
 </body>
 </html>
